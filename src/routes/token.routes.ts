@@ -16,9 +16,14 @@ router.post(
   rbacMiddleware(['admin', 'editor']),
   validateTokenizeRequest,
   async (req, res) => {
-    const { data } = req.body;
-    const token = await tokenService.tokenize(data);
-    res.json({ token });
+    try {
+      const { data } = req.body;
+      const token = await tokenService.tokenize(data);
+      res.status(201).json({ token }); // Use 201 Created for new resources
+    } catch (error) {
+      // Add proper logging here in a real application
+      res.status(500).json({ message: 'An internal error occurred during tokenization.' });
+    }
   },
 );
 
