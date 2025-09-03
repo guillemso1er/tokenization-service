@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { authConfig } from '../config';
-
+import { UserRole } from '../enums/roles.enum.ts';
 export const authMiddleware = (
   req: Request,
   res: Response,
@@ -22,9 +22,10 @@ export const authMiddleware = (
   }
 };
 
-export const rbacMiddleware = (roles: string[]) => {
+export const rbacMiddleware = (roles: UserRole[]) => { 
   return (req: Request, res: Response, next: NextFunction) => {
-    if (!roles.includes(req.user.role)) {
+    // Note: req.user.role would come from your JWT payload
+    if (!req.user || !roles.includes(req.user.role)) {
       return res.status(403).json({ message: 'Forbidden' });
     }
     next();

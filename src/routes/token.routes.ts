@@ -4,6 +4,7 @@ import { KmsService } from '../services/kms.service';
 import { TokenRepository } from '../data/repositories/token.repository';
 import { authMiddleware, rbacMiddleware } from '../middleware/auth.middleware';
 import { validateTokenizeRequest } from '../middleware/validation.middleware';
+import { UserRole } from '../enums/roles.enum.ts'; 
 
 const router = Router();
 const kmsService = new KmsService();
@@ -13,7 +14,7 @@ const tokenService = new TokenService(kmsService, tokenRepository);
 router.post(
   '/tokenize',
   authMiddleware,
-  rbacMiddleware(['admin', 'editor']),
+   rbacMiddleware([UserRole.Admin, UserRole.Editor]),
   validateTokenizeRequest,
   async (req, res) => {
     try {
@@ -30,7 +31,7 @@ router.post(
 router.get(
   '/detokenize/:token',
   authMiddleware,
-  rbacMiddleware(['admin']),
+  rbacMiddleware([UserRole.Admin]),
   async (req, res) => {
     const { token } = req.params;
     try {
